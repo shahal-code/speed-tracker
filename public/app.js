@@ -1,15 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const btnStart = document.getElementById('btn-start');
-    const valPing = document.getElementById('val-ping');
     const valDownload = document.getElementById('val-download');
     const valUpload = document.getElementById('val-upload');
     
     const liveSpeed = document.getElementById('live-speed');
     const liveUnit = document.getElementById('live-unit');
     const statusText = document.getElementById('status-text');
-
-    const loaderPing = document.getElementById('loader-ping');
     const loaderDownload = document.getElementById('loader-download');
     const loaderUpload = document.getElementById('loader-upload');
 
@@ -71,13 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset UI
     function resetUI() {
-        valPing.innerText = '--';
-        valDownload.innerText = '--';
-        valUpload.innerText = '--';
         liveSpeed.innerText = '0.00';
         updateDial(0);
         document.querySelectorAll('.metric-card').forEach(c => c.classList.remove('active'));
-        loaderPing.style.width = '0%';
         loaderDownload.style.width = '0%';
         loaderUpload.style.width = '0%';
     }
@@ -129,35 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sleep Helper
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    // Measure Ping
-    async function measurePing() {
-        statusText.innerText = "Measuring Latency...";
-        document.getElementById('card-ping').classList.add('active');
-        liveUnit.innerText = 'ms';
-        
-        let totalPing = 0;
-        const pingCount = 5;
-        
-        for (let i = 0; i < pingCount; i++) {
-            const start = performance.now();
-            try {
-                await fetch(`/ping?t=${Date.now()}`);
-            } catch (e) {}
-            const end = performance.now();
-            const rtt = end - start;
-            totalPing += rtt;
-            
-            updateDial(rtt, 100);
-            loaderPing.style.width = `${((i+1)/pingCount)*100}%`;
-            await sleep(100);
-        }
-        
-        const avgPing = totalPing / pingCount;
-        valPing.innerText = avgPing.toFixed(1);
-        document.getElementById('card-ping').classList.remove('active');
-        updateDial(0);
-        return avgPing;
-    }
 
     // Measure Download
     async function measureDownload() {
@@ -247,11 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // History Functions
-    function saveHistory(ping, dl, ul) {
+    function saveHistory(dl, ul) {
         let history = JSON.parse(localStorage.getItem('neon_speed_history') || '[]');
         history.unshift({
             date: new Date().toLocaleString(),
-            ping: ping.toFixed(1),
             dl: dl.toFixed(2),
             ul: ul.toFixed(2)
         });
@@ -268,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
             li.innerHTML = `
                 <div class="hist-date">${item.date}</div>
                 <div class="hist-metrics">
-                    <span>${item.ping}ms</span>
                     <span class="down">↓${item.dl} Mbps</span>
                     <span class="up">↑${item.ul} Mbps</span>
                 </div>
@@ -283,9 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnStart.innerText = "TESTING...";
         resetUI();
 
-        const ping = await measurePing();
-        await sleep(500);
-        
         const dl = await measureDownload();
         await sleep(500);
         
@@ -295,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnStart.innerText = "TEST AGAIN";
         btnStart.disabled = false;
         
-        saveHistory(ping, dl, ul);
+        saveHistory(dl, ul);
     });
 
     renderHistory();
