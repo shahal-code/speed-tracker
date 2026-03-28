@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Speed Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-effect"></div>
+    <div class="container">
+        <header>
+            <h1 class="glow-text">NEON<span class="highlight">SPEED</span></h1>
+            <p>High-Performance Internet Speed Test</p>
+        </header>
+
+        <main>
+            <!-- Speedometer Area -->
+            <div class="speedometer-container">
+                <svg viewBox="0 0 200 120" class="speedometer-svg">
+                    <defs>
+                        <linearGradient id="speedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#0ff" />
+                            <stop offset="40%" stop-color="#ff00ff" />
+                            <stop offset="100%" stop-color="#9d00ff" />
+                        </linearGradient>
+                        <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1" />
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur2" />
+                            <feMerge>
+                                <feMergeNode in="blur2" />
+                                <feMergeNode in="blur1" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <!-- Background Arc -->
+                    <path class="arc-bg" d="M 20 100 A 80 80 0 0 1 180 100" />
+                    <!-- Progress Arc -->
+                    <path class="arc-progress" id="speed-progress" d="M 20 100 A 80 80 0 0 1 180 100" />
+                    <!-- Tick marks -->
+                    <g id="ticks-container"></g>
+                    <!-- Dial/Needle -->
+                    <g id="needle" transform="rotate(-90 100 100)">
+                        <polygon points="98,105 102,105 100,20" class="needle-poly" />
+                        <circle cx="100" cy="100" r="5" class="needle-pivot" />
+                    </g>
+                </svg>
+                <div class="current-speed-display">
+                    <div id="live-speed">0.00</div>
+                    <div class="live-subtitle" id="live-unit">Mbps</div>
+                </div>
+            </div>
+
+            <!-- Results Metrics -->
+            <div class="metrics">
+                <div class="metric-card" id="card-ping">
+                    <div class="metric-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        PING
+                    </div>
+                    <div class="metric-value"><span id="val-ping">--</span> <span class="unit">ms</span></div>
+                    <div class="metric-loader" id="loader-ping"></div>
+                </div>
+                <div class="metric-card" id="card-download">
+                    <div class="metric-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        DOWNLOAD
+                    </div>
+                    <div class="metric-value"><span id="val-download">--</span> <span class="unit">Mbps</span></div>
+                    <div class="metric-loader" id="loader-download"></div>
+                </div>
+                <div class="metric-card" id="card-upload">
+                    <div class="metric-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        UPLOAD
+                    </div>
+                    <div class="metric-value"><span id="val-upload">--</span> <span class="unit">Mbps</span></div>
+                    <div class="metric-loader" id="loader-upload"></div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="btn-start" class="btn-primary">START ENGINE</button>
+            </div>
+            
+            <div class="info-text" id="status-text">Server: Optimal • Ready to analyze</div>
+        </main>
+        
+        <div class="history-section">
+            <h3>Recent Tests</h3>
+            <ul id="history-list"></ul>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
