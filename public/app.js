@@ -17,31 +17,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const needle = document.getElementById('needle');
     
     const svgTicks = document.getElementById('ticks-container');
+    const svgLabels = document.getElementById('labels-container');
     const historyList = document.getElementById('history-list');
 
     // Constants
     const TEST_DURATION = 5000; // 5 seconds per phase
     const ARC_LENGTH = 251.2;
-    let MAX_SPEED = 1000; // dynamic depending on current speed, start at 1Gbps scale
+    let MAX_SPEED = 1000; // global gigabit limit
+    let lastScale = 1000;
 
-    // Draw Speedometer Ticks
-    function drawTicks() {
+    // Draw Speedometer Ticks & Labels
+    function drawTicks(targetScale = MAX_SPEED) {
         svgTicks.innerHTML = '';
-        const numTicks = 20;
+        svgLabels.innerHTML = '';
+        const numTicks = 30; // More ticks for precision
+        const numLabels = 6;  // 0, 200, 400, 600, 800, 1000 (example)
+        
         for (let i = 0; i <= numTicks; i++) {
             const angle = Math.PI - (i * Math.PI) / numTicks;
-            const x1 = 100 + 72 * Math.cos(angle);
-            const y1 = 100 - 72 * Math.sin(angle);
-            const x2 = 100 + 80 * Math.cos(angle);
-            const y2 = 100 - 80 * Math.sin(angle);
-
+            const isMajor = i % (numTicks / (numLabels - 1)) === 0;
+            
+            const r1 = isMajor ? 70 : 74;
+            const r2 = 80;
+            
+            const x1 = 100 + r1 * Math.cos(angle);
+            const y1 = 100 - r1 * Math.sin(angle);
+            const x2 = 100 + r2 * Math.cos(angle);
+            const y2 = 100 - r2 * Math.sin(angle);
+    
             const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
             tick.setAttribute("x1", x1);
             tick.setAttribute("y1", y1);
             tick.setAttribute("x2", x2);
             tick.setAttribute("y2", y2);
-            tick.className.baseVal = "tick";
+            tick.className.baseVal = isMajor ? "tick major" : "tick";
+            tick.dataset.index = i;
             svgTicks.appendChild(tick);
+            
+            if (isMajor) {
+                const labelVal = Math.round((i / numTicks) * targetScale);
+                const rx = 100 + 60 * Math.cos(angle);
+                const ry = 100 - 60 * Math.sin(angle);
+                
+                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("x", rx);
+                txt.setAttribute("y", ry);
+                txt.textContent = labelVal;
+                svgLabels.appendChild(txt);
+            }
         }
     }
     drawTicks();
@@ -60,13 +83,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Update Speedometer UI
-    function updateDial(value, max = MAX_SPEED) {
+    function updateDial(value, maxScale = MAX_SPEED) {
         // dynamic scaling if speed exceeds max
-        while(value > max) { max *= 2; }
-        MAX_SPEED = max;
+        const oldMax = MAX_SPEED;
+        
+        // If we are passed a specific max (like 100 for ping), use that.
+        // Otherwise, use and grow the session's MAX_SPEED.
+        if (value > MAX_SPEED) {
+            while(value > MAX_SPEED) { MAX_SPEED *= 2; }
+        }
+        
+        const currentScale = Math.max(MAX_SPEED, maxScale);
+        
+        if (currentScale !== lastScale) {
+            lastScale = currentScale;
+            drawTicks(currentScale); // Redraw labels for the current scale
+        }
 
         // value maps to 0..1
-        let ratio = value / MAX_SPEED;
+        let ratio = value / currentScale;
         ratio = Math.max(0, Math.min(1, ratio));
 
         // Offset: 251.2 (0%) to 0 (100%)
@@ -76,6 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const angle = -90 + (ratio * 180);
         needle.setAttribute('transform', `rotate(${angle} 100 100)`);
         
+        // Highlight ticks
+        const numTicks = 30;
+        const activeCount = Math.floor(ratio * numTicks);
+        const allTicks = svgTicks.querySelectorAll('.tick');
+        allTicks.forEach((t, idx) => {
+            if (idx <= activeCount) {
+                t.classList.add('active');
+            } else {
+                t.classList.remove('active');
+            }
+        });
+
         liveSpeed.innerText = value.toFixed(2);
     }
 

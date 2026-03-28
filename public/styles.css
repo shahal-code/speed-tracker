@@ -93,14 +93,22 @@ header p {
 }
 
 .needle-poly {
-    fill: var(--text-primary);
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-    transition: transform 0.2s cubic-bezier(0.3, 1.5, 0.5, 1); /* slight bounce */
-    transform-origin: 100px 100px;
+    fill: var(--cyan);
+    filter: drop-shadow(0 0 10px var(--cyan));
+    transition: transform 0.1s ease-out; /* snapier for speed */
 }
 
 .needle-pivot {
-    fill: var(--text-primary);
+    fill: var(--cyan);
+    filter: drop-shadow(0 0 5px var(--cyan));
+}
+
+.speed-labels text {
+    fill: var(--text-secondary);
+    font-size: 8px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
 }
 
 /* Tick Marks */

@@ -41,10 +41,13 @@
                     <path class="arc-progress" id="speed-progress" d="M 20 100 A 80 80 0 0 1 180 100" />
                     <!-- Tick marks -->
                     <g id="ticks-container"></g>
+                    <!-- Numeric Labels -->
+                    <g id="labels-container" class="speed-labels"></g>
                     <!-- Dial/Needle -->
                     <g id="needle" transform="rotate(-90 100 100)">
-                        <polygon points="98,105 102,105 100,20" class="needle-poly" />
-                        <circle cx="100" cy="100" r="5" class="needle-pivot" />
+                        <path d="M 97 100 L 100 20 L 103 100 Z" class="needle-poly" />
+                        <circle cx="100" cy="100" r="6" class="needle-pivot" />
+                        <circle cx="100" cy="100" r="3" fill="#000" />
                     </g>
                 </svg>
                 <div class="current-speed-display">
