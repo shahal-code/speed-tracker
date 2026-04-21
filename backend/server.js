@@ -6,8 +6,14 @@ const crypto = require('crypto');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS and disable caching
-app.use(cors());
+// CORS configuration
+const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+app.use(cors({
+    origin: allowedOrigin,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type']
+}));
+
 app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
@@ -15,8 +21,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, 'public')));
+// REMOVED: Serving frontend static files is now handled separately on frontend hosting (S3/CloudFront)
 
 // Create a 20MB buffer for the download test to simulate a large payload
 const DOWNLOAD_SIZE = 20 * 1024 * 1024; // 20 MB

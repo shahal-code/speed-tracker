@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Test - Fast Clone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">FAST<span class="dot">.</span>CLONE</div>
+        </header>
+
+        <main>
+            <div class="speed-display">
+                <div class="speed-value" id="main-speed">0</div>
+                <div class="speed-info">
+                    <div class="unit" id="main-unit">Mbps</div>
+                    <div class="status-icon" id="status-icon">
+                        <svg class="spinner" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke-width="2"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="more-info-btn-container">
+                <button id="btn-more-info" class="btn-more" hidden>Show more info</button>
+            </div>
+
+            <div id="extra-metrics" class="extra-metrics hidden">
+                <div class="metric-row">
+                    <div class="metric-group">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-sub">Unloaded</div>
+                        <div class="metric-value"><span id="val-latency">--</span> <span class="small-unit">ms</span></div>
+                    </div>
+                    <div class="metric-group border-left">
+                        <div class="metric-label">Upload</div>
+                        <div class="metric-sub">Speed</div>
+                        <div class="metric-value"><span id="val-upload">--</span> <span class="small-unit">Mbps</span></div>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="extra-progress" class="progress-bar"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <span>Powered by AWS High-Speed Network</span>
+            </div>
+            <div class="restart-container">
+                <button id="btn-restart" class="btn-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                </button>
+            </div>
+        </footer>
+    </div>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
